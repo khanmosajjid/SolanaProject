@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import * as anchor from "@coral-xyz/anchor";
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
@@ -11,6 +11,8 @@ import {
 } from "@solana/spl-token";
 
 import idl from '../../idl/referral_token.json'
+import toast from "react-hot-toast";
+import confetti from 'canvas-confetti';
 
 // =========================
 // CONSTANTS
@@ -65,6 +67,7 @@ export default function BuyToken() {
   const [tokenAmountInput, setTokenAmountInput] = useState("100");
   const [referralAddressInput, setReferralAddressInput] =
     useState(DEFAULT_REFERRAL);
+  const buttonRef = useRef(null);
   const [status, setStatus] = useState({
     loading: false,
     error: "",
@@ -135,12 +138,37 @@ export default function BuyToken() {
     refreshStatus();
   }, [wallet.publicKey?.toBase58()]);
 
+
+  const triggerButtonConfetti = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+      confetti({
+        origin: { x, y },
+        particleCount: 150,
+        spread: 80,
+        startVelocity: 30,
+        gravity: 0.8,
+        scalar: 0.8,
+        colors: ['#cddc39', '#d704d0', '#7711f4', '#78f40b', '#f40b3a', '#f4c20b'],
+        zIndex: 9999,
+        disableForReducedMotion: true
+      });
+    }
+  };
+
   const buyTokens = async () => {
+    let loadingToast;
     try {
       if (!wallet.publicKey) {
-        alert("Connect wallet first");
+        toast.error("Please connect wallet first");
         return;
       }
+
+      loadingToast = toast.loading("Processing transaction...");
 
       console.log("Buyer:", wallet.publicKey.toBase58());
 
@@ -301,11 +329,20 @@ export default function BuyToken() {
 
       await refreshStatus();
 
-      alert("BUY SUCCESS\n" + sig);
-      console.log("TX:", sig);
+      toast.dismiss(loadingToast);
+      // alert("BUY SUCCESS\n" + sig);
+      toast.success(
+        <div>
+          <b>Buy Successful 🎉</b>
+          <br />
+          Tx: {sig.slice(0, 8)}...{sig.slice(-8)}
+        </div>
+      );
+      triggerButtonConfetti();
     } catch (err) {
       console.error("BUY ERROR:", err);
-      alert(err?.message || "ERROR — check console");
+      toast.error(err?.message || "Transaction Failed ");
+      toast.dismiss(loadingToast);
     }
   };
 
@@ -354,11 +391,11 @@ export default function BuyToken() {
             <div className="col-lg-6 mb-4">
               <div className="buy-section">
                 <div className="buy-container">
-                   <div className="toggle-container">
-                      <button className="toggle-btn active">
-                        Buy Token
-                      </button>
-                    </div>
+                  <div className="toggle-container">
+                    <button className="toggle-btn active">
+                      Buy Token
+                    </button>
+                  </div>
                   <div className="buy-card">
                     <div className="buy-row">
                       <span>Token Price</span>
@@ -400,7 +437,7 @@ export default function BuyToken() {
                       />
                     </div>
 
-                    <button className="buy-btn" onClick={buyTokens}>
+                    <button className="buy-btn" ref={buttonRef}  onClick={buyTokens}>
                       BUY TOKENS
                     </button>
                   </div>
@@ -409,32 +446,29 @@ export default function BuyToken() {
             </div>
 
             <div className="col-lg-8 m-auto ">
-               <div className="status-card">
-                    <div><b>Config PDA:</b> <span>{CONFIG.toBase58()}</span></div>
-                    <div><b>Vault Authority:</b> <span>{VAULT_AUTHORITY.toBase58()}</span></div>
-                    <div><b>Vault Token ATA:</b> <span>{VAULT_TOKEN.toBase58()}</span></div>
-                    <div><b>Buyer USDT (raw):</b> <span>{status.buyerUsdtRaw}</span></div>
-                    <div><b>Vault Project Token (raw):</b> <span className="text-aura">{status.vaultTokenRaw}</span></div>
+              <div className="status-card">
+                <div><b>Config PDA:</b> <span>{CONFIG.toBase58()}</span></div>
+                <div><b>Vault Authority:</b> <span>{VAULT_AUTHORITY.toBase58()}</span></div>
+                <div><b>Vault Token ATA:</b> <span>{VAULT_TOKEN.toBase58()}</span></div>
+                <div><b>Buyer USDT (raw):</b> <span>{status.buyerUsdtRaw}</span></div>
+                <div><b>Vault Project Token (raw):</b> <span className="text-aura">{status.vaultTokenRaw}</span></div>
 
-                    {status.error && (
-                      <div className="error-text">{status.error}</div>
-                    )}
+                {status.error && (
+                  <div className="error-text">{status.error}</div>
+                )}
 
-                  <div className="text-start mt-4">
-      <button
-        className="refresh-btn-pro"
-        onClick={refreshStatus}
-        disabled={status.loading}
-      >
-        <i class="fas fa-sync-alt me-2"></i>
-        {status.loading ? "Refreshing..." : " Refresh Status"}
-      </button>
-    </div>
-                  </div>
+                <div className="text-start mt-4">
+                  <button
+                    className="refresh-btn-pro"
+                    onClick={refreshStatus}
+                    disabled={status.loading}
+                  >
+                    <i class="fas fa-sync-alt me-2"></i>
+                    {status.loading ? "Refreshing..." : " Refresh Status"}
+                  </button>
+                </div>
+              </div>
             </div>
-
-
-
           </div>
         </div>
       </section>

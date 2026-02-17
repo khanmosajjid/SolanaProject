@@ -738,3 +738,9 @@
     gap: 30px 40px;
   }
 }
+@media screen and (max-width: 380px) {
+  .status-card div span {
+    margin-left: 0;
+    font-size: 15px;
+  }
+}

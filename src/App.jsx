@@ -13,11 +13,15 @@ import Faq from "./components/main/Faq";
 import Footer from "./components/common/Footer";
 import ScrollToTop from "./components/main/ScrollToTop";
 
+import { Toaster } from "react-hot-toast";
+
 const App = () => {
 
   return (
     <>
-
+      <Toaster
+        position="top-center"
+      />
       <Header />
       <main>
         <Hero />
