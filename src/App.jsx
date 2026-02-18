@@ -66,6 +66,10 @@ export default function App() {
     error: "",
     buyerUsdtRaw: "-",
     vaultTokenRaw: "-",
+    totalUsdtSoldRaw: "-",
+    totalBuyerTokensSoldRaw: "-",
+    totalReferralTokensPaidRaw: "-",
+    totalPurchases: "-",
   });
 
   const tokenAmount = Number(tokenAmountInput || "0");
@@ -89,6 +93,10 @@ export default function App() {
           error: "Connect wallet to see buyer USDT balance",
           buyerUsdtRaw: "-",
           vaultTokenRaw: "-",
+          totalUsdtSoldRaw: "-",
+          totalBuyerTokensSoldRaw: "-",
+          totalReferralTokensPaidRaw: "-",
+          totalPurchases: "-",
         });
         return;
       }
@@ -102,6 +110,7 @@ export default function App() {
 
       const buyerUsdtInfo = await connection.getAccountInfo(buyerUsdt);
       const vaultInfo = await connection.getAccountInfo(vaultToken);
+      const configInfo = await connection.getAccountInfo(CONFIG);
 
       const buyerUsdtRaw = buyerUsdtInfo
         ? (await connection.getTokenAccountBalance(buyerUsdt)).value.amount
@@ -111,11 +120,33 @@ export default function App() {
         ? (await connection.getTokenAccountBalance(vaultToken)).value.amount
         : "0";
 
+      let totalUsdtSoldRaw = "0";
+      let totalBuyerTokensSoldRaw = "0";
+      let totalReferralTokensPaidRaw = "0";
+      let totalPurchases = "0";
+
+      if (configInfo?.data && configInfo.data.length >= 138) {
+        const data = configInfo.data;
+        const readU64 = (offset) => {
+          const view = new DataView(data.buffer, data.byteOffset + offset, 8);
+          return view.getBigUint64(0, true).toString();
+        };
+
+        totalUsdtSoldRaw = readU64(106);
+        totalBuyerTokensSoldRaw = readU64(114);
+        totalReferralTokensPaidRaw = readU64(122);
+        totalPurchases = readU64(130);
+      }
+
       setStatus({
         loading: false,
         error: "",
         buyerUsdtRaw,
         vaultTokenRaw,
+        totalUsdtSoldRaw,
+        totalBuyerTokensSoldRaw,
+        totalReferralTokensPaidRaw,
+        totalPurchases,
       });
     } catch (e) {
       setStatus({
@@ -123,6 +154,10 @@ export default function App() {
         error: e?.message || "Failed to fetch status",
         buyerUsdtRaw: "-",
         vaultTokenRaw: "-",
+        totalUsdtSoldRaw: "-",
+        totalBuyerTokensSoldRaw: "-",
+        totalReferralTokensPaidRaw: "-",
+        totalPurchases: "-",
       });
     }
   };
@@ -379,6 +414,19 @@ export default function App() {
         </div>
         <div>
           <b>Vault project token (raw):</b> {status.vaultTokenRaw}
+        </div>
+        <div>
+          <b>Total USDT sold (raw):</b> {status.totalUsdtSoldRaw}
+        </div>
+        <div>
+          <b>Total buyer tokens sold (raw):</b> {status.totalBuyerTokensSoldRaw}
+        </div>
+        <div>
+          <b>Total referral tokens paid (raw):</b>{" "}
+          {status.totalReferralTokensPaidRaw}
+        </div>
+        <div>
+          <b>Total purchases:</b> {status.totalPurchases}
         </div>
         {status.error ? (
           <div style={{ color: "crimson" }}>{status.error}</div>
