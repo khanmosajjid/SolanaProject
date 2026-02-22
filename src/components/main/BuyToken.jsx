@@ -18,6 +18,7 @@ import {
 import idl from "../../idl/referral_token.json";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
+import { FaRegCopy } from "react-icons/fa";
 
 const PROGRAM_ID = new PublicKey(idl.address);
 const PROJECT_MINT = new PublicKey(
@@ -501,6 +502,26 @@ export default function BuyToken() {
     }
   };
 
+  const [copied, setCopied] = useState(false);
+  const baseUrl = window.location.origin + "/ref/";
+
+  const handleCopy = async () => {
+    try {
+
+      const fullUrl = baseUrl + referralAddressInput;
+
+      await navigator.clipboard.writeText(fullUrl);
+      // await navigator.clipboard.writeText(referralAddressInput);
+
+      // window.open(referralAddressInput, "_blank");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success("Referral link copied!");
+    } catch (err) {
+      toast.error("Copy failed")
+      console.error("Copy failed", err);
+    }
+  };
   return (
     <>
       <section id="buy-token" className="benefit pb-110">
@@ -596,15 +617,25 @@ export default function BuyToken() {
                       </span>
                     </div>
 
-                    <div className="buy-input-group">
+                    <div className="buy-input-group w-100">
                       <label>Referral Wallet Address</label>
-                      <input
-                        type="text"
-                        value={referralAddressInput}
-                        onChange={(e) =>
-                          setReferralAddressInput(e.target.value)
-                        }
-                      />
+                      <div className="d-flex gap-3 justify-content-between align-items-center">
+                        <div className="w-100"><input
+                          type="text"
+                          className="w-100"
+                          value={referralAddressInput}
+                          onChange={(e) =>
+                            setReferralAddressInput(e.target.value)
+                          }
+                          readOnly
+                        /></div>
+                        <div className="tooltip-wrapper">
+                          <span onClick={handleCopy} className="copy-btn"><FaRegCopy /></span>
+                          <div className="tooltip-text">
+                            {copied ? "Copied!" : "Copy Referral link"}
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     <button
