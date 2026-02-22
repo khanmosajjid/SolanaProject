@@ -1,0 +1,542 @@
+/* Background setup for the whole page */
+
+
+/* Container for the card width */
+.card-wrapper {
+    position: relative;
+    width: 480px;
+}
+
+.card-shadow {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--tg-primary-color);
+    border-radius: 15px;
+    border: 2px solid #000;
+    z-index: 0;
+}
+
+.main-card {
+    position: relative;
+    z-index: 1;
+    background-color: var(--tg-secondary-color);
+    border-radius: 15px;
+    border: 2px solid rgba(58, 60, 77, 0.46);
+    padding: 1.5rem !important; /* Bootstrap 'p-4' equivalent */
+}
+
+/* Buy/Sell Toggle Switch Container */
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(58, 60, 77, 0.46);
+    border-radius: 30px;
+    overflow: hidden;
+    background-color: rgba(255,255, 255, 0.04);
+    padding: 4px;
+    margin-bottom: 1.5rem; 
+    width: 100%;
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+    flex-grow: 1;
+    font-weight: bold;
+    border-radius: 25px;
+    border: none;
+    padding: 13px 0;
+    background: transparent;
+    color: #212529; /* text-dark */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Active State for Buttons (Green background) */
+.toggle-btn.active {
+    background-color: var(--tg-primary-color);
+    color: #000;
+}
+
+/* Input Boxes Styling */
+.custom-input-box {
+    background-color: rgba(58, 60, 77, 0.46);
+    border: 1px solid rgba(58, 60, 77, 0.46); 
+    border-radius: 0.5rem;
+    padding: 1.5rem 1rem;
+}
+
+.input-text {
+    font-size: 1rem;
+    color: #f2f2f2;
+}
+.input-text::placeholder{
+    color: #7a7979;
+}
+.input-text::-webkit-inner-spin-button,
+.input-text::-webkit-outer-spin-button{
+    display: none;
+}
+.rate-font{
+    font-size: 15px;
+}
+/* Action Button Wrapper */
+.action-btn-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Shadow for the Button */
+.btn-shadow {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 100%;
+    height: 100%;
+    background-color: #cddc39;
+    border-radius: 5px;
+    border: 2px solid #000;
+    z-index: 0;
+}
+
+/* The Main Action Button */
+.buy-sell-btn {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 30px;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    padding: 0.8rem 0;
+    cursor: pointer;
+    font-size: 15px;
+    transition: .3s ease;
+}
+.buy-sell-btn:hover{
+    background-color: var(--tg-primary-color);
+    color: var(--tg-white);
+}
+.action-btn:active {
+    transform: translate(2px, 2px); /* Slight click effect */
+}
+
+
+/* About us  */
+
+
+/* Custom Text Gradient for 'Loot Laugh' vibe */
+/* .loot-gradient {
+    background: linear-gradient(to right, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+} */
+
+/* Solana specific purple/green vibe */
+.solana-color {
+    color: #14F195; /* Solana Green */
+    font-weight: 600;
+}
+
+/* Styling the boxes for Why Solana and Mission */
+.feature-box {
+    background: rgba(255, 255, 255, 0.05); /* Very subtle transparent bg */
+    border-radius: 8px; /* Rounded corners on the right side */
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px); /* Moves up slightly on hover */
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Typography adjustments */
+.text-secondary {
+    color: #b0b0b0 !important; /* Lighter grey for better readability on dark */
+}
+
+.lead {
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.token_copy_board {
+  gap: 10px;
+  padding: 20px;
+  font-size: 16px;
+  margin-top: 60px;
+  font-weight: 500;
+  border-radius: 10px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  white-space: nowrap;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: var(--bs-white);
+  background-color: var(--tg-secondary-color);
+  border: 1px solid var(--tg-primary-color);
+}
+.token_copy_board .icon {
+  width: 32px;
+  height: 32px;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  border-radius: 4px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: var(--bs-white);
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: var(--tg-primary-color);
+}
+.token_copy_board .code mark {
+  color: #afb0b0;
+  background-color: transparent;
+}
+.token_copy_board .copy_btn {
+  border: none;
+  min-width: 96px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  border-radius: 4px;
+  color: var(--bs-white);
+  padding: 2px 10px 4px;
+  background-color: var(--tg-primary-color);
+}
+
+
+#toast {
+  visibility: hidden;
+  min-width: 220px;
+  background-color: #13ba00;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 12px;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  font-size: 14px;
+}
+
+#toast.show {
+  visibility: visible;
+  animation: fadein 0.4s, fadeout 0.4s 2s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; bottom: 10px; }
+  to { opacity: 1; bottom: 30px; }
+}
+
+@keyframes fadeout {
+  from { opacity: 1; bottom: 30px; }
+  to { opacity: 0; bottom: 10px; }
+}
+
+.custom-flex{
+    display: flex;
+    justify-content: center;
+}
+@media (max-width: 768px) {
+  .token_copy_board {
+    display: flex;
+    flex-direction: column; 
+    white-space: normal; 
+    /* text-align: center; */
+    width: 100%;
+    padding: 20px 15px;
+    gap: 15px;
+  }
+
+  .token_copy_board .code {
+    justify-content: center;
+    word-break: break-all; 
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  .token_copy_board .code .label {
+    display: block; 
+    width: 100%;
+    margin-bottom: 5px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+  }
+  
+  .token_copy_board .code mark {
+     margin-left: 0;
+  }
+
+  .token_copy_board .copy_btn {
+    width: 100%; 
+    padding: 7px;
+    font-size: 15px;
+  }
+   .token_copy_board .icon{
+    margin-right: 5px;
+   }
+}
+
+@media screen and (max-width: 767px) {
+    .card-wrapper{
+        width: 100%;
+    }
+    .custom-flex{
+    display: block;
+    justify-content: center;
+}
+.footer-social-link{
+    display: flex;
+    gap: 12px;
+    padding-left: 0;
+}
+}
+@media screen and (max-width: 350px) {
+    .main-card{
+        padding: 1.1rem!important;
+    }
+}
+
+
+
+
+
+
+.buy-section {
+  padding: 30px 20px;
+  background-color: var(--tg-secondary-color);
+  border-radius: 15px;
+  border: 2px solid #000;
+  display: flex;
+  border-radius: 30px;
+  justify-content: center;
+}
+
+.buy-container {
+  width: 100%;
+  max-width: 800px;
+}
+
+.buy-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+.wallet-btn {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Glass Card */
+.buy-card{
+  margin-bottom: 0;
+}
+.buy-card,
+.status-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+.status-card div {
+  margin-bottom: 3px;
+}
+.status-card div span {
+  font-weight: 400;
+  margin-left: 10px;
+  color: #d8d8d8;
+  word-wrap: break-word;
+}
+.text-aura{
+  color: #01d7ac!important;
+}
+.text-gas{
+  color: red;
+}
+.buy-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.buy-input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.buy-input-group label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.buy-input-group input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #726c5561;
+  background: #38383857;
+  color: #fff;
+  outline: none;
+  transition: 0.3s;
+}
+
+.buy-input-group input:focus {
+  border-color: var(--tg-primary-color);
+}
+
+.buy-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(45deg, #3b82f6, #06b6d4);
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s ease;
+  margin-top: 10px;
+}
+
+.buy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.refresh-btn {
+  margin-top: 15px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #64748b;
+  color: #fff;
+  cursor: pointer;
+}
+
+.refresh-btn:hover {
+  background: #475569;
+}
+
+.error-text {
+  color: #f87171;
+  margin-top: 10px;
+}
+
+
+.status-card-pro {
+  background: linear-gradient(145deg, #1c1f2e, #141726);
+  border-radius: 20px;
+  padding: 30px;
+  color: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: 0.3s ease;
+}
+
+.status-card-pro:hover {
+  transform: translateY(-4px);
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.card-header h5 {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.status-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.status-item {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 14px;
+  word-break: break-all;
+  color: #fff;
+}
+
+.highlight {
+  color: #00ffcc;
+  font-weight: 600;
+}
+
+.error-box {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff6b6b;
+  font-size: 14px;
+}
+
+.refresh-btn-pro {
+  background: linear-gradient(135deg, #00ffcc, #007bff);
+  border: none;
+  padding: 10px 25px;
+  border-radius: 30px;
+  font-weight: 600;
+  color: #000;
+  transition: 0.3s ease;
+}
+
+.refresh-btn-pro:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buy-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

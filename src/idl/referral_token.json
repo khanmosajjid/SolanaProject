@@ -1,5 +1,5 @@
 {
-  "address": "wQwUHwJYmJoY1Xc6csP2KsFGNvLLCNDtxYx1oa1UEqK",
+  "address": "Ak2s48QtvFF6nVKMf1cZbuPtecje3xdaJHtFsxMVGrcT",
   "metadata": {
     "name": "referral_token",
     "version": "0.1.0",
@@ -26,6 +26,7 @@
         },
         {
           "name": "config",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -36,7 +37,10 @@
                   110,
                   102,
                   105,
-                  103
+                  103,
+                  95,
+                  118,
+                  50
                 ]
               }
             ]
@@ -120,7 +124,10 @@
                   110,
                   102,
                   105,
-                  103
+                  103,
+                  95,
+                  118,
+                  50
                 ]
               }
             ]
@@ -136,6 +143,9 @@
         },
         {
           "name": "usdt_mint"
+        },
+        {
+          "name": "admin_usdt"
         },
         {
           "name": "vault_authority",
@@ -263,6 +273,51 @@
           "type": "u8"
         }
       ]
+    },
+    {
+      "name": "update_receiver_usdt_ata",
+      "discriminator": [
+        91,
+        78,
+        149,
+        148,
+        241,
+        88,
+        202,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  95,
+                  118,
+                  50
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "signer": true
+        },
+        {
+          "name": "new_receiver_usdt"
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -278,6 +333,38 @@
         204,
         130
       ]
+    }
+  ],
+  "events": [
+    {
+      "name": "SaleTracked",
+      "discriminator": [
+        248,
+        0,
+        26,
+        198,
+        13,
+        196,
+        77,
+        90
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidUsdtAmount",
+      "msg": "USDT amount must be greater than zero"
+    },
+    {
+      "code": 6001,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6002,
+      "name": "UnauthorizedAdmin",
+      "msg": "Unauthorized admin"
     }
   ],
   "types": [
@@ -299,12 +386,80 @@
             "type": "pubkey"
           },
           {
+            "name": "receiver_usdt_ata",
+            "type": "pubkey"
+          },
+          {
             "name": "referral_percent",
             "type": "u8"
           },
           {
             "name": "vault_bump",
             "type": "u8"
+          },
+          {
+            "name": "total_usdt_sold",
+            "type": "u64"
+          },
+          {
+            "name": "total_buyer_tokens_sold",
+            "type": "u64"
+          },
+          {
+            "name": "total_referral_tokens_paid",
+            "type": "u64"
+          },
+          {
+            "name": "total_purchases",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SaleTracked",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyer",
+            "type": "pubkey"
+          },
+          {
+            "name": "sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "usdt_amount",
+            "type": "u64"
+          },
+          {
+            "name": "buyer_tokens",
+            "type": "u64"
+          },
+          {
+            "name": "referral_tokens",
+            "type": "u64"
+          },
+          {
+            "name": "total_usdt_sold",
+            "type": "u64"
+          },
+          {
+            "name": "total_buyer_tokens_sold",
+            "type": "u64"
+          },
+          {
+            "name": "total_referral_tokens_paid",
+            "type": "u64"
+          },
+          {
+            "name": "total_purchases",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
           }
         ]
       }
