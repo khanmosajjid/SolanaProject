@@ -533,6 +533,54 @@
 }
 
 
+/* Button copy  */
+
+.copy-btn{
+  display: flex;
+  width: 46.8px;
+  height: 46.8px;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--tg-primary-color);
+  border: 1px solid #1d2135;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity .3s ;
+}
+.copy-btn:hover{
+  opacity: .8;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.copy-btn {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.tooltip-text {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.tooltip-wrapper:hover .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+}
 /* Responsive */
 @media (max-width: 768px) {
   .buy-row {
