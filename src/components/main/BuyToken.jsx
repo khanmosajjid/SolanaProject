@@ -148,6 +148,7 @@ export default function BuyToken() {
   const [usdtAmountInput, setUsdtAmountInput] = useState("1");
   const [referralAddressInput, setReferralAddressInput] =
     useState(DEFAULT_REFERRAL);
+  const [isReferralLocked, setIsReferralLocked] = useState(false);
   const [status, setStatus] = useState({
     loading: false,
     error: "",
@@ -172,6 +173,10 @@ export default function BuyToken() {
     ? totalTokenEstimate - referralTokenEstimate
     : 0;
   const tokenPerUsdt = 1 / TOKEN_PRICE_USDT;
+  const referralLink =
+    walletKey && typeof window !== "undefined"
+      ? `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(walletKey)}`
+      : "";
   const totalTokensSoldRaw = (
     BigInt(status.totalBuyerTokensSoldRaw || "0") +
     BigInt(status.totalReferralTokensSoldRaw || "0")
@@ -204,6 +209,20 @@ export default function BuyToken() {
       zIndex: 9999,
       disableForReducedMotion: true,
     });
+  };
+
+  const copyReferralLink = async () => {
+    if (!referralLink) {
+      toast.error("Connect wallet to generate referral link");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      toast.success("Referral link copied");
+    } catch {
+      toast.error("Failed to copy referral link");
+    }
   };
 
   const refreshStatus = async () => {
@@ -310,10 +329,40 @@ export default function BuyToken() {
   }, [walletKey]);
 
   useEffect(() => {
-    if (wallet.publicKey && referralAddressInput === DEFAULT_REFERRAL) {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const referralFromLink =
+      params.get("ref") || params.get("referral") || params.get("r");
+
+    if (!referralFromLink) {
+      return;
+    }
+
+    try {
+      const referralPk = new PublicKey(referralFromLink.trim());
+      if (!PublicKey.isOnCurve(referralPk.toBuffer())) {
+        return;
+      }
+
+      setReferralAddressInput(referralPk.toBase58());
+      setIsReferralLocked(true);
+    } catch {
+      // ignore invalid referral in URL
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      !isReferralLocked &&
+      wallet.publicKey &&
+      referralAddressInput === DEFAULT_REFERRAL
+    ) {
       setReferralAddressInput(wallet.publicKey.toBase58());
     }
-  }, [wallet.publicKey, referralAddressInput]);
+  }, [wallet.publicKey, referralAddressInput, isReferralLocked]);
 
   const buyTokens = async () => {
     let loadingToast;
@@ -601,10 +650,33 @@ export default function BuyToken() {
                       <input
                         type="text"
                         value={referralAddressInput}
+                        disabled={isReferralLocked}
                         onChange={(e) =>
                           setReferralAddressInput(e.target.value)
                         }
                       />
+                    </div>
+
+                    {isReferralLocked && (
+                      <div className="buy-row">
+                        <span>Referral Source</span>
+                        <span>Locked from referral link</span>
+                      </div>
+                    )}
+
+                    <div className="buy-input-group">
+                      <label>Your Referral Link</label>
+                      <input type="text" value={referralLink} readOnly />
+                    </div>
+
+                    <div className="text-start mb-3">
+                      <button
+                        className="refresh-btn-pro"
+                        onClick={copyReferralLink}
+                      >
+                        <i className="fas fa-copy me-2"></i>
+                        Copy Referral Link
+                      </button>
                     </div>
 
                     <button
