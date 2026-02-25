@@ -3237,7 +3237,12 @@ label {
     font-size: 0.94rem;
     color: #eee;
 }
-
+.contact-list-box li  a {
+    color: #eee;
+}
+.contact-list-box li  a:hover{
+    color: #ddd;
+}
 .contact-list-s1 {
     display: flex;
     justify-content: center
@@ -3286,6 +3291,7 @@ label {
   background-color: var(--tg-primary-color);
   height: 100%;
   width: 6px;
+  margin-left: 2px;
   display: inline-block;
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;

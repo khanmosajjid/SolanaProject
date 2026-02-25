@@ -735,6 +735,11 @@
 
 @media screen and (max-width: 360px) {
   .coming-time{
+    gap: 30px 40px!important;
+  }
+}
+@media screen and (max-width: 360px) {
+  .coming-time{
     gap: 30px 40px;
   }
 }
