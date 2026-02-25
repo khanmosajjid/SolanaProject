@@ -170,7 +170,7 @@
   gap: 10px;
   padding: 20px;
   font-size: 16px;
-  margin-top: 60px;
+  margin-top: 40px;
   font-weight: 500;
   border-radius: 10px;
   -webkit-box-align: center;
@@ -356,27 +356,28 @@
 }
 .buy-card,
 .status-card {
-  background: rgba(255, 255, 255, 0.05);
+  /* background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); */
   color: #fff;
 }
 .status-card div {
   margin-bottom: 3px;
 }
 .status-card div span {
-  font-weight: 400;
+  font-weight: 500;
   margin-left: 10px;
   color: #d8d8d8;
+  font-size: 17px;
   word-wrap: break-word;
 }
 .text-aura{
   color: #01d7ac!important;
 }
 .text-gas{
-  color: red;
+  color: rgb(77, 230, 1)!important;
 }
 .buy-row {
   display: flex;
@@ -586,5 +587,11 @@
   .buy-row {
     flex-direction: column;
     gap: 4px;
+  }
+  .faq-wrap{
+    margin: 0 10px!important;
+  }
+  .faq-area{
+    padding-bottom: 300px;
   }
 }

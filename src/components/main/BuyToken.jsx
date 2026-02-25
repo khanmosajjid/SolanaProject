@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import copySoundFile from "../../assets/img/sound/sound.mp3";
+
 import * as anchor from "@coral-xyz/anchor";
 import {
   Connection,
@@ -29,12 +31,14 @@ const FIXED_RECEIVER_USDT_ATA = new PublicKey(
   "Ans12FY6qVF5RX4kgafcmv6J6i2g5NL2qk4T2BUFCv23",
 );
 
+const CONTRACT_ADDRESS = "7gWKE7LyxPuZr6eXbpc8idGVADYkk4Ypiohobb97z38J";
 const DEFAULT_REFERRAL = "BoA81LeZ5iTGBspJKVZ42cgGb85oUEo382xoca2XNH95";
 const TOKEN_PRICE_USDT = 0.001;
 const USDT_DECIMALS = 6;
 const TOKEN_DECIMALS = 6;
 const REFERRAL_PERCENT = 5;
 const PRICE_USDT_MICRO_PER_TOKEN = 1000n;
+
 
 const [CONFIG] = PublicKey.findProgramAddressSync(
   [Buffer.from("config_v2")],
@@ -145,7 +149,10 @@ function readU64LeAsString(accountData, offset) {
 export default function BuyToken() {
   const wallet = useWallet();
   const buttonRef = useRef(null);
+  const audioRef = useRef(null);
 
+  const [copyText, setCopyText] = useState("Copy");
+ const [showToast, setShowToast] = useState("");
   const [usdtAmountInput, setUsdtAmountInput] = useState("1");
   const [referralAddressInput, setReferralAddressInput] =
     useState(DEFAULT_REFERRAL);
@@ -571,9 +578,27 @@ export default function BuyToken() {
       console.error("Copy failed", err);
     }
   };
+
+
+  const handleContractCopy = async () => {
+    await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+
+    // Play sound
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
+
+    setCopyText("Copied");
+    setShowToast("show");
+
+    setTimeout(() => {
+      setCopyText("Copy");
+      setShowToast("");
+    }, 2000);
+  };
   return (
     <>
-      <section id="buy-token" className="benefit pb-110">
+      <section id="buy-token" className="benefit pt-100">
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-lg-10">
@@ -599,6 +624,43 @@ export default function BuyToken() {
                   Always use official program and mint addresses to avoid fake
                   token scams.
                 </p>
+              </div>
+              <div className="col-md-12 mb-4 benefit-picss ">
+                <div className="status-card w-100">
+                  <div>
+                    <b>Your USDT Balance:</b>{" "}
+                    <span>
+                      {formatAmount(status.buyerUsdtRaw, USDT_DECIMALS)} USDT
+                    </span>
+                  </div>
+                  <div>
+                    <b>Vault LOL Balance:</b>{" "}
+                    <span className="text-aura">
+                      {formatAmount(status.vaultTokenRaw, TOKEN_DECIMALS)} LOL
+                    </span>
+                  </div>
+                  <div>
+                    <b>Total Tokens Sold (Buyer + Referral):</b>{" "}
+                    <span className="text-gas">
+                      {formatAmount(totalTokensSoldRaw, TOKEN_DECIMALS)} LOL
+                    </span>
+                  </div>
+
+                  {status.error && (
+                    <div className="error-text">{status.error}</div>
+                  )}
+
+                  <div className="text-start mt-4">
+                    <button
+                      className="refresh-btn-pro"
+                      onClick={refreshStatus}
+                      disabled={status.loading}
+                    >
+                      <i className="fas fa-sync-alt me-2"></i>
+                      {status.loading ? "Refreshing..." : " Refresh Status"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -712,46 +774,35 @@ export default function BuyToken() {
               </div>
             </div>
 
-            <div className="col-lg-8 m-auto ">
-              <div className="status-card">
-                <div>
-                  <b>Your USDT Balance:</b>{" "}
-                  <span>
-                    {formatAmount(status.buyerUsdtRaw, USDT_DECIMALS)} USDT
-                  </span>
-                </div>
-                <div>
-                  <b>Vault LOL Balance:</b>{" "}
-                  <span className="text-aura">
-                    {formatAmount(status.vaultTokenRaw, TOKEN_DECIMALS)} LOL
-                  </span>
-                </div>
-                <div>
-                  <b>Total Tokens Sold (Buyer + Referral):</b>{" "}
-                  <span className="text-gas">
-                    {formatAmount(totalTokensSoldRaw, TOKEN_DECIMALS)} LOL
-                  </span>
-                </div>
+            <div className="col-lg-8 m-auto d-flex align-items-center justify-content-center">
+              <div className="token_copy_board">
+               
 
-                {status.error && (
-                  <div className="error-text">{status.error}</div>
-                )}
+                <span className="code">
+                  Token Contract Address:
+                  <mark className="">{CONTRACT_ADDRESS}</mark>
+                </span>
 
-                <div className="text-start mt-4">
-                  <button
-                    className="refresh-btn-pro"
-                    onClick={refreshStatus}
-                    disabled={status.loading}
-                  >
-                    <i className="fas fa-sync-alt me-2"></i>
-                    {status.loading ? "Refreshing..." : " Refresh Status"}
-                  </button>
-                </div>
+                <audio ref={audioRef}>
+                  <source src={copySoundFile} type="audio/mpeg" />
+                </audio>
+
+                <button
+                  className="copy_btn"
+                  type="button"
+                  onClick={handleContractCopy}
+                >
+                  {copyText}
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+        <div id="toast" className={`custom-toast ${showToast}`}>
+          Copied to clipboard!
+        </div>
     </>
   );
 }

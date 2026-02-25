@@ -20,8 +20,8 @@ const App = () => {
       <Header />
       <main>
         <Hero />
-        <Contribution />
         <BuyToken />
+        <Contribution />
         <Brand />
         <About />
         <Features />

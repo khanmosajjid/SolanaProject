@@ -66,7 +66,7 @@ const Footer = () => {
               <div className="col-xl-3 col-lg-2 col-md-4 col-sm-6">
                 <div className="footer-widget">
                   <h4 className="fw-title">Social Links</h4>
-                  <ul className="footer-social-link">
+                  <ul className="footer-social-link flex-wrap">
                     <li>
                       <a
                         href="https://www.facebook.com/share/1BtpSnWPmH/"
