@@ -152,7 +152,7 @@ export default function BuyToken() {
   const audioRef = useRef(null);
 
   const [copyText, setCopyText] = useState("Copy");
- const [showToast, setShowToast] = useState("");
+  const [showToast, setShowToast] = useState("");
   const [usdtAmountInput, setUsdtAmountInput] = useState("1");
   const [referralAddressInput, setReferralAddressInput] =
     useState(DEFAULT_REFERRAL);
@@ -619,34 +619,34 @@ export default function BuyToken() {
               </div>
 
               <div className="col-md-12 mb-4 benefit-picss">
-                <h3>Contract Address</h3>
+                <h3>Token Contract Address</h3>
                 <p className="mb-3">
                   Always use official program and mint addresses to avoid fake
                   token scams.
                 </p>
-                 <div className="token_copy_board">
-               
+                <div className="token_copy_board">
 
-                <span className="code">
-                   {/* Contract Address: */}
-                  <mark className="text-con">{CONTRACT_ADDRESS}</mark>
-                </span>
 
-                <audio ref={audioRef}>
-                  <source src={copySoundFile} type="audio/mpeg" />
-                </audio>
+                  <span className="code">
+                    {/* Contract Address: */}
+                    <mark className="text-con">{CONTRACT_ADDRESS}</mark>
+                  </span>
 
-                <button
-                  className="copy_btn"
-                  type="button"
-                  onClick={handleContractCopy}
-                >
-                  {copyText}
-                </button>
+                  <audio ref={audioRef}>
+                    <source src={copySoundFile} type="audio/mpeg" />
+                  </audio>
+
+                  <button
+                    className="copy_btn"
+                    type="button"
+                    onClick={handleContractCopy}
+                  >
+                    {copyText}
+                  </button>
+                </div>
               </div>
-              </div>
-          
-              <div className="col-md-12 mb-4 benefit-picss ">
+
+              {/* <div className="col-md-12 mb-4 benefit-picss ">
                 <div className="status-card w-100">
                   <div>
                     <b>Your USDT Balance:</b>{" "}
@@ -681,6 +681,47 @@ export default function BuyToken() {
                       {status.loading ? "Refreshing..." : " Refresh Status"}
                     </button>
                   </div>
+                </div>
+              </div> */}
+              <div className="col-md-12 mb-4 benefit-picss">
+                <div className=" w-100">
+
+                  <h3 className="card-title text-start"> Account Overview</h3>
+
+                  <div className="status-item">
+                    <div className="label">Your USDT Balance</div>
+                    <div className="value">
+                      {formatAmount(status.buyerUsdtRaw, USDT_DECIMALS)} USDT
+                    </div>
+                  </div>
+
+                  <div className="status-item">
+                    <div className="label">Vault LOL Balance</div>
+                    <div className="value text-aura">
+                      {formatAmount(status.vaultTokenRaw, TOKEN_DECIMALS)} LOL
+                    </div>
+                  </div>
+
+                  <div className="status-item">
+                    <div className="label">Total Tokens Sold</div>
+                    <div className="value text-gas">
+                      {formatAmount(totalTokensSoldRaw, TOKEN_DECIMALS)} LOL
+                    </div>
+                  </div>
+
+                  {status.error && (
+                    <div className="error-text">{status.error}</div>
+                  )}
+
+                  <button
+                    className="refresh-btn-pro"
+                    onClick={refreshStatus}
+                    disabled={status.loading}
+                  >
+                    <i className="fas fa-sync-alt me-2"></i>
+                    {status.loading ? "Refreshing..." : "Refresh Status"}
+                  </button>
+
                 </div>
               </div>
             </div>
@@ -795,14 +836,14 @@ export default function BuyToken() {
               </div>
             </div>
 
-          
+
           </div>
         </div>
       </section>
 
-        <div id="toast" className={`custom-toast ${showToast}`}>
-          Copied to clipboard!
-        </div>
+      <div id="toast" className={`custom-toast ${showToast}`}>
+        Copied to clipboard!
+      </div>
     </>
   );
 }
