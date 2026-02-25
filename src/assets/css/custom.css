@@ -1,6 +1,13 @@
 /* Background setup for the whole page */
 
 
+.wallet-adapter-button-trigger {
+  background-color: var(--tg-primary-color)!important;
+  border-radius: 30px!important;
+}
+.wallet-adapter-button-trigger:hover{
+  background-color: #1c1d34!important;
+}
 /* Container for the card width */
 .card-wrapper {
     position: relative;
@@ -168,9 +175,9 @@
 
 .token_copy_board {
   gap: 10px;
-  padding: 20px;
+  padding: 10px;
   font-size: 16px;
-  margin-top: 40px;
+  /* margin-top: 40px; */
   font-weight: 500;
   border-radius: 10px;
   -webkit-box-align: center;
@@ -182,7 +189,7 @@
   display: inline-flex;
   color: var(--bs-white);
   background-color: var(--tg-secondary-color);
-  border: 1px solid var(--tg-primary-color);
+  border: 1px solid #262a3d;
 }
 .token_copy_board .icon {
   width: 32px;
@@ -378,6 +385,9 @@
 }
 .text-gas{
   color: rgb(77, 230, 1)!important;
+}
+.text-con{
+  color: #dcdcdc!important;
 }
 .buy-row {
   display: flex;

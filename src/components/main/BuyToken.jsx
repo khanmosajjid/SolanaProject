@@ -620,11 +620,32 @@ export default function BuyToken() {
 
               <div className="col-md-12 mb-4 benefit-picss">
                 <h3>Contract Address</h3>
-                <p>
+                <p className="mb-3">
                   Always use official program and mint addresses to avoid fake
                   token scams.
                 </p>
+                 <div className="token_copy_board">
+               
+
+                <span className="code">
+                   {/* Contract Address: */}
+                  <mark className="text-con">{CONTRACT_ADDRESS}</mark>
+                </span>
+
+                <audio ref={audioRef}>
+                  <source src={copySoundFile} type="audio/mpeg" />
+                </audio>
+
+                <button
+                  className="copy_btn"
+                  type="button"
+                  onClick={handleContractCopy}
+                >
+                  {copyText}
+                </button>
               </div>
+              </div>
+          
               <div className="col-md-12 mb-4 benefit-picss ">
                 <div className="status-card w-100">
                   <div>
@@ -774,28 +795,7 @@ export default function BuyToken() {
               </div>
             </div>
 
-            <div className="col-lg-8 m-auto d-flex align-items-center justify-content-center">
-              <div className="token_copy_board">
-               
-
-                <span className="code">
-                  Token Contract Address:
-                  <mark className="">{CONTRACT_ADDRESS}</mark>
-                </span>
-
-                <audio ref={audioRef}>
-                  <source src={copySoundFile} type="audio/mpeg" />
-                </audio>
-
-                <button
-                  className="copy_btn"
-                  type="button"
-                  onClick={handleContractCopy}
-                >
-                  {copyText}
-                </button>
-              </div>
-            </div>
+          
           </div>
         </div>
       </section>
