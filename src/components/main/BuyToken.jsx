@@ -18,7 +18,6 @@ import {
 import idl from "../../idl/referral_token.json";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
-import { FaRegCopy } from "react-icons/fa";
 
 const PROGRAM_ID = new PublicKey(idl.address);
 const PROJECT_MINT = new PublicKey(
@@ -29,7 +28,7 @@ const FIXED_RECEIVER_USDT_ATA = new PublicKey(
   "Ans12FY6qVF5RX4kgafcmv6J6i2g5NL2qk4T2BUFCv23",
 );
 
-const DEFAULT_REFERRAL = "BoA81LeZ5iTGBspJKVZ42cgGb85oUEo382xoca2XNH95";
+const DEFAULT_REFERRAL = "C7jx5k9yrNbsfz8dQbX2GEtM2ZiSpg5dqAcL385HFirS";
 const TOKEN_PRICE_USDT = 0.001;
 const USDT_DECIMALS = 6;
 const TOKEN_DECIMALS = 6;
@@ -551,26 +550,6 @@ export default function BuyToken() {
     }
   };
 
-  const [copied, setCopied] = useState(false);
-  const baseUrl = window.location.origin + "/ref/";
-
-  const handleCopy = async () => {
-    try {
-
-      const fullUrl = baseUrl + referralAddressInput;
-
-      await navigator.clipboard.writeText(fullUrl);
-      // await navigator.clipboard.writeText(referralAddressInput);
-
-      // window.open(referralAddressInput, "_blank");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      toast.success("Referral link copied!");
-    } catch (err) {
-      toast.error("Copy failed")
-      console.error("Copy failed", err);
-    }
-  };
   return (
     <>
       <section id="buy-token" className="benefit pb-110">
