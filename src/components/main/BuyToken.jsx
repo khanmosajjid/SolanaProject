@@ -25,6 +25,7 @@ const PROGRAM_ID = new PublicKey(idl.address);
 const PROJECT_MINT = new PublicKey(
   "7gWKE7LyxPuZr6eXbpc8idGVADYkk4Ypiohobb97z38J",
 );
+const CONTRACT_ADDRESS = PROJECT_MINT.toBase58();
 const USDT_MINT = new PublicKey("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB");
 const FIXED_RECEIVER_USDT_ATA = new PublicKey(
   "Ans12FY6qVF5RX4kgafcmv6J6i2g5NL2qk4T2BUFCv23",
@@ -36,7 +37,6 @@ const USDT_DECIMALS = 6;
 const TOKEN_DECIMALS = 6;
 const REFERRAL_PERCENT = 5;
 const PRICE_USDT_MICRO_PER_TOKEN = 1000n;
-
 
 const [CONFIG] = PublicKey.findProgramAddressSync(
   [Buffer.from("config_v2")],
@@ -215,6 +215,26 @@ export default function BuyToken() {
       zIndex: 9999,
       disableForReducedMotion: true,
     });
+  };
+
+  const handleContractCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+
+      if (audioRef.current) {
+        audioRef.current.play();
+      }
+
+      setCopyText("Copied");
+      setShowToast("show");
+
+      setTimeout(() => {
+        setCopyText("Copy");
+        setShowToast("");
+      }, 2000);
+    } catch {
+      toast.error("Failed to copy contract address");
+    }
   };
 
   const copyReferralLink = async () => {
@@ -585,8 +605,6 @@ export default function BuyToken() {
                   token scams.
                 </p>
                 <div className="token_copy_board">
-
-
                   <span className="code">
                     {/* Contract Address: */}
                     <mark className="text-con">{CONTRACT_ADDRESS}</mark>
@@ -645,7 +663,6 @@ export default function BuyToken() {
               </div> */}
               <div className="col-md-12 mb-4 benefit-picss">
                 <div className=" w-100">
-
                   <h3 className="card-title text-start"> Account Overview</h3>
 
                   <div className="status-item">
@@ -681,7 +698,6 @@ export default function BuyToken() {
                     <i className="fas fa-sync-alt me-2"></i>
                     {status.loading ? "Refreshing..." : "Refresh Status"}
                   </button>
-
                 </div>
               </div>
             </div>
@@ -795,8 +811,6 @@ export default function BuyToken() {
                 </div>
               </div>
             </div>
-
-
           </div>
         </div>
       </section>
