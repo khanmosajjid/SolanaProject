@@ -17,19 +17,19 @@ import Preloader from "./components/common/Preloader";
 
 const App = () => {
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    });
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("load", () => {
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 500);
+  //   });
+  // }, []);
 
   return (
     <>
-      {loading && <Preloader />}
+      {/* {loading && <Preloader />} */}
       <Toaster position="top-center" />
       <Header />
       <main>
