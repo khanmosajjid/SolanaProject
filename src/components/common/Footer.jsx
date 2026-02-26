@@ -66,7 +66,7 @@ const Footer = () => {
               <div className="col-xl-3 col-lg-2 col-md-4 col-sm-6">
                 <div className="footer-widget">
                   <h4 className="fw-title">Social Links</h4>
-                  <ul className="footer-social-link">
+                  <ul className="footer-social-link flex-wrap">
                     <li>
                       <a
                         href="https://www.facebook.com/share/1BtpSnWPmH/"
@@ -94,15 +94,7 @@ const Footer = () => {
                         <i className="fab fa-instagram"></i>
                       </a>
                     </li>
-                    <li>
-                      <a
-                        href="https://t.me/loot_laugh"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <i className="fab fa-telegram-plane"></i>
-                      </a>
-                    </li>
+
                     <li>
                       <a
                         href="https://t.me/lootlaugh"
@@ -140,7 +132,7 @@ const Footer = () => {
                   <h4 className="fw-title">Subscribe Newsletter</h4>
                   <div class="footer-newsletter">
                     <ul className="contact-list-box">
-                      <li>
+                      <li className="d-none">
                         <em className="contact-icon fas fa-phone"></em>
                         <div className="contact-text">
                           <span>+44 2341 883345</span>
@@ -150,14 +142,14 @@ const Footer = () => {
                       <li>
                         <em className="contact-icon fas fa-envelope"></em>
                         <div className="contact-text">
-                          <span>info@lootlaugh.com</span>
+                          <span><a href="mailto: lootlaughmem@gmail.com">lootlaughmem@gmail.com</a></span>
                         </div>
                       </li>
 
                       <li>
-                        <em className="contact-icon fas fa-location-arrow"></em>
+                        <em className="contact-icon fab fa-telegram-plane"></em>
                         <div className="contact-text">
-                          <span>Xyz</span>
+                          <span><a href="https://t.me/lootlaugh">View In Telegram</a></span>
                         </div>
                       </li>
                     </ul>

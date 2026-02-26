@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import Header from "./components/common/Header";
 import Hero from "./components/main/Hero";
 import Contribution from "./components/main/Contribution";
@@ -12,16 +13,29 @@ import Footer from "./components/common/Footer";
 import ScrollToTop from "./components/main/ScrollToTop";
 
 import { Toaster } from "react-hot-toast";
+import Preloader from "./components/common/Preloader";
 
 const App = () => {
+
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   window.addEventListener("load", () => {
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 500);
+  //   });
+  // }, []);
+
   return (
     <>
+      {/* {loading && <Preloader />} */}
       <Toaster position="top-center" />
       <Header />
       <main>
         <Hero />
-        <Contribution />
         <BuyToken />
+        <Contribution />
         <Brand />
         <About />
         <Features />

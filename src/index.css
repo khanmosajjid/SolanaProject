@@ -3048,8 +3048,8 @@ label {
     background-position: center;
     border-radius: 20px 20px 0 0;
     position: relative;
-    padding: 350px 0 0;
-    margin: -350px 20px 0;
+    /* padding: 350px 0 0; */
+    /* margin: -350px 20px 0; */
     overflow: hidden;
 }
 .footer-bg::before {
@@ -3084,7 +3084,7 @@ label {
     margin-bottom: 0;
 }
 .footer-link .list-wrap li a {
-    color: #CBD0D4;
+    color: #e4e5e7;
     font-size: 15px;
     font-weight: 500;
     line-height: 1.3;
@@ -3118,7 +3118,7 @@ label {
 .footer-newsletter p {
     margin-bottom: 60px;
     font-size: 15px;
-    color: #CBD0D4;
+    color: #e4e5e7;
     font-weight: 500;
 }
 .footer-newsletter form {
@@ -3137,7 +3137,7 @@ label {
 }
 .footer-newsletter form input::placeholder {
     font-size: 15px;
-    color: #AAABB2;
+    color: #e4e5e7;
     font-weight: 400;
 }
 .footer-newsletter form button {
@@ -3218,7 +3218,9 @@ label {
     max-width: 60px;
     justify-content: sp;
 }
-
+.footer-widget p {
+    color: #e4e5e7;
+}
 .contact-list-box {
     margin-top: -7.5px;
     margin-bottom: 7.5px;
@@ -3232,9 +3234,15 @@ label {
     padding-top: 7.5px;
     padding-bottom: 7.5px;
     align-items: center;
-    font-size: 0.94rem
+    font-size: 0.94rem;
+    color: #eee;
 }
-
+.contact-list-box li  a {
+    color: #eee;
+}
+.contact-list-box li  a:hover{
+    color: #ddd;
+}
 .contact-list-s1 {
     display: flex;
     justify-content: center
@@ -3283,6 +3291,7 @@ label {
   background-color: var(--tg-primary-color);
   height: 100%;
   width: 6px;
+  margin-left: 2px;
   display: inline-block;
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;

@@ -7,15 +7,15 @@ const Hero = () => {
     // 🔥 Set your presale end date here
     const now = new Date();
 
-    // 🔥 Add 3 Months (same like your jQuery logic)
-    const futureDate = new Date(
-        now.getFullYear(),
-        now.getMonth() + 3,
-        now.getDate(),
-        now.getHours(),
-        now.getMinutes(),
-        now.getSeconds()
-    ).getTime();
+    const futureDate = new Date(2026, 2, 15, 0, 0, 0).getTime();
+    // const futureDate = new Date(
+    //     now.getFullYear(),
+    //     now.getMonth() + 3,
+    //     now.getDate(),
+    //     now.getHours(),
+    //     now.getMinutes(),
+    //     now.getSeconds()
+    // ).getTime();
 
     const calculateTimeLeft = () => {
         const difference = futureDate - new Date().getTime();

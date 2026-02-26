@@ -33,6 +33,7 @@
     "react-slick": "^0.31.0",
     "slick-carousel": "^1.8.1",
     "stream-browserify": "^3.0.0",
+    "swiper": "^12.1.2",
     "util": "^0.12.5"
   },
   "devDependencies": {

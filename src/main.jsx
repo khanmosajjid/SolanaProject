@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/css/custom.css";
 import "./assets/css/default.css";
 import "./assets/css/responsive.css";
+// import "./assets/css/slick.css";
 import "./index.css";
 
 import {
