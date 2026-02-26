@@ -13,23 +13,23 @@ import Footer from "./components/common/Footer";
 import ScrollToTop from "./components/main/ScrollToTop";
 
 import { Toaster } from "react-hot-toast";
-import Preloader from "./components/common/Preloader";
+// import Preloader from "./components/common/Preloader";
 
 const App = () => {
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        setLoading(false);
-      }, 0);
-    });
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("load", () => {
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 0);
+  //   });
+  // }, []);
 
   return (
     <>
-      {loading && <Preloader />}
+      {/* {loading && <Preloader />} */}
       <Toaster position="top-center" />
       <Header />
       <main>
