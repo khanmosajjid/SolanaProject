@@ -3270,6 +3270,7 @@ label {
 /*=============================
 	20. Preloader
 ===============================*/
+/* 
 #preloader {
 	position: fixed;
 	display: flex;
@@ -3331,4 +3332,4 @@ label {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   };
-}
+} */
