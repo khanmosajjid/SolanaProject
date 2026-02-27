@@ -13,6 +13,10 @@
     position: relative;
     width: 480px;
 }
+.text-gold{
+  color: rgb(220, 187, 0);
+  font-weight: 500;
+}
 
 .card-shadow {
     position: absolute;

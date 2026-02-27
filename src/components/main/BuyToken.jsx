@@ -720,7 +720,7 @@ export default function BuyToken() {
                     </div>
                     <div className="buy-row">
                       <span>Listing Price</span>
-                      <span> 0.002 USDT</span>
+                      <span className="text-gold">1 Token = 0.002 USDT</span>
                     </div>
 
                     <div className="buy-input-group">
