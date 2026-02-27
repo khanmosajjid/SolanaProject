@@ -33,12 +33,15 @@ const RPC_ENDPOINTS = [...EXTRA_RPC_ENDPOINTS, ...DEFAULT_RPC_ENDPOINTS]
   .filter((endpoint, index, endpoints) => endpoints.indexOf(endpoint) === index)
   .filter(Boolean);
 const RPC_ENDPOINT = RPC_ENDPOINTS[0];
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ConnectionProvider endpoint={RPC_ENDPOINT}>
     <WalletProvider wallets={wallets} autoConnect>
       <WalletModalProvider>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </WalletModalProvider>
     </WalletProvider>
   </ConnectionProvider>,

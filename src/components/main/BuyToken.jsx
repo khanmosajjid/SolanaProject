@@ -181,7 +181,7 @@ export default function BuyToken() {
   const tokenPerUsdt = 1 / TOKEN_PRICE_USDT;
   const referralLink =
     walletKey && typeof window !== "undefined"
-      ? `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(walletKey)}`
+      ? `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(walletKey)}#buyToken`
       : "";
   const totalTokensSoldRaw = (
     BigInt(status.totalBuyerTokensSoldRaw || "0") +
@@ -578,7 +578,7 @@ export default function BuyToken() {
 
   return (
     <>
-      <section id="buy-token" className="benefit pt-100">
+      <section id="buyToken" className="benefit pt-100">
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-lg-10">
@@ -717,6 +717,10 @@ export default function BuyToken() {
                     <div className="buy-row">
                       <span>Conversion</span>
                       <span>1 USDT = {tokenPerUsdt.toFixed(2)} LOL</span>
+                    </div>
+                    <div className="buy-row">
+                      <span>Listing Price</span>
+                      <span> 0.002 USDT</span>
                     </div>
 
                     <div className="buy-input-group">

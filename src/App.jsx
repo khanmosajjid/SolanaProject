@@ -13,6 +13,7 @@ import Footer from "./components/common/Footer";
 import ScrollToTop from "./components/main/ScrollToTop";
 
 import { Toaster } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 // import Preloader from "./components/common/Preloader";
 
 const App = () => {
@@ -26,6 +27,17 @@ const App = () => {
   //     }, 0);
   //   });
   // }, []);
+
+   const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === "#buyToken") {
+      const section = document.getElementById("buyToken");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   return (
     <>

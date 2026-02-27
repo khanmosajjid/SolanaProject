@@ -118,12 +118,12 @@
   .banner-shape-wrap img:nth-child(2) {
     right: 1%;
     bottom: 17%;
-    width: 170px;
+    /* width: 170px; */
   }
   .banner-shape-wrap img:nth-child(1) {
     left: 1%;
     bottom: 33%;
-    width: 175px;
+    /* width: 175px; */
   }
   .contribution-title .title {
     font-size: 45px;
@@ -281,9 +281,9 @@
   .header-action {
     display: none;
   }
-  .banner-shape-wrap {
+  /* .banner-shape-wrap {
     display: none;
-  }
+  } */
   .contribution-shape-wrap img:nth-child(2) {
     right: 14%;
     bottom: -1%;
@@ -665,6 +665,31 @@
   .team-bg {
     margin: 0;
   }
+    .banner-shape-wrap img:nth-child(1){
+      bottom: 20px;
+    }
+    .banner-shape-wrap img:nth-child(2){
+      bottom: 20px;
+    }
+  /* .banner-shape-wrap img {
+    width: 100px!important;
+  } */
+}
+@media (max-width: 834px){
+   .banner-shape-wrap img {
+    width: 120px!important;
+  }
+     .banner-shape-wrap img:nth-child(1){
+      bottom: 30px;
+    }
+    .banner-shape-wrap img:nth-child(2){
+      bottom: 30px;
+    }
+}
+@media (max-width: 450px){
+   .banner-shape-wrap img {
+    width: 80px!important;
+  }
 }
 
 /* Small devices (landscape phones, 576px and up) */
@@ -677,6 +702,7 @@
     width: 340px;
     height: 340px;
   }
+
   .banner-content .title {
     font-size: 50px;
   }

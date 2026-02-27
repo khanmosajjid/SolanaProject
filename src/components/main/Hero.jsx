@@ -73,7 +73,7 @@ const Hero = () => {
                             </p>
 
                             {/* 🔥 Countdown */}
-                            <div className="banner-countdown-wrap">
+                            <div className="banner-countdown-wrap d-none">
                                 <div className="coming-time">
                                     <div className="time-count day">
                                         <span>{timeLeft.days}</span> Days

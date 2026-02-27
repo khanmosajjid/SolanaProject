@@ -142,7 +142,7 @@ const Header = () => {
                       <a href="#about">About</a>
                     </li>
                     <li>
-                      <a href="#buy-token">Buy Token</a>
+                      <a href="#buyToken">Buy Token</a>
                     </li>
                     <li>
                       <a href="#chart">Platform</a>
@@ -182,15 +182,6 @@ const Header = () => {
                           rel="noreferrer"
                         >
                           <i className="fab fa-instagram"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="https://t.me/loot_laugh"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <i className="fab fa-telegram-plane"></i>
                         </a>
                       </li>
                       <li>
