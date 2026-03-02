@@ -83,7 +83,7 @@ const TokenChart = () => {
                                             id="funding-tab-pane"
                                             role="tabpanel"
                                             aria-labelledby="funding-tab"
-                                            tabindex="0"
+                                            tabIndex="0"
                                         >
                                             <div className="chart-list">
                                                 <ul className="list-wrap">

@@ -1,160 +1,81 @@
-import { useEffect, useState, useRef } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import copySoundFile from "../../assets/img/sound/sound.mp3";
-
-import * as anchor from "@coral-xyz/anchor";
-import {
-  Connection,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
-import { Buffer } from "buffer";
-import {
-  createAssociatedTokenAccountIdempotentInstruction,
-  getAssociatedTokenAddress,
-  getAssociatedTokenAddressSync,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-
-import idl from "../../idl/referral_token.json";
+import React, { useEffect, useState, useRef } from "react";
+import { useAccount, useReadContract, useBalance, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { parseUnits, formatUnits, isAddress } from "viem";
+import { erc20Abi } from "viem"; // Built-in ERC20 ABI from viem
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
 
-const PROGRAM_ID = new PublicKey(idl.address);
-const PROJECT_MINT = new PublicKey(
-  "7gWKE7LyxPuZr6eXbpc8idGVADYkk4Ypiohobb97z38J",
-);
-const CONTRACT_ADDRESS = PROJECT_MINT.toBase58();
-const USDT_MINT = new PublicKey("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB");
-const FIXED_RECEIVER_USDT_ATA = new PublicKey(
-  "Ans12FY6qVF5RX4kgafcmv6J6i2g5NL2qk4T2BUFCv23",
-);
+import copySoundFile from "../../assets/img/sound/sound.mp3";
+
+// ==========================================
+// EVM CONSTANTS & CONFIGURATION
+// ==========================================
+// Replace these with your actual EVM Contract Addresses
+const CONTRACT_ADDRESS = "7gWKE7LyxPuZr6eXbpc8idGVADYkk4Ypiohobb97z38J"; 
+const USDT_CONTRACT_ADDRESS = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
+const PROJECT_TOKEN_ADDRESS = "Ans12FY6qVF5RX4kgafcmv6J6i2g5NL2qk4T2BUFCv23";
+const VAULT_ADDRESS = CONTRACT_ADDRESS; // Usually, the sale contract holds the tokens
 
 const DEFAULT_REFERRAL = "C7jx5k9yrNbsfz8dQbX2GEtM2ZiSpg5dqAcL385HFirS";
 const TOKEN_PRICE_USDT = 0.001;
-const USDT_DECIMALS = 6;
-const TOKEN_DECIMALS = 6;
+const USDT_DECIMALS = 6; // Standard USDT decimals on EVM
+const TOKEN_DECIMALS = 6; 
 const REFERRAL_PERCENT = 5;
-const PRICE_USDT_MICRO_PER_TOKEN = 1000n;
 
-const [CONFIG] = PublicKey.findProgramAddressSync(
-  [Buffer.from("config_v2")],
-  PROGRAM_ID,
-);
-
-const [VAULT_AUTHORITY] = PublicKey.findProgramAddressSync(
-  [Buffer.from("vault")],
-  PROGRAM_ID,
-);
-
-const VAULT_TOKEN = getAssociatedTokenAddressSync(
-  PROJECT_MINT,
-  VAULT_AUTHORITY,
-  true,
-);
-
-const DEFAULT_RPC_ENDPOINTS = [
-  "https://go.getblock.us/0c7ba136b3f241e5a599f4b120616970",
+// ==========================================
+// MOCK ABI (Aapko apne contract ka asli ABI yahan lagana hoga)
+// ==========================================
+const SALE_CONTRACT_ABI = [
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "usdtAmount", "type": "uint256" },
+      { "internalType": "address", "name": "sponsor", "type": "address" }
+    ],
+    "name": "buy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalBuyerTokensSold",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalReferralTokensSold",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  }
 ];
 
-const configuredRpcEndpoints = (
-  import.meta.env.VITE_SOLANA_RPC_URLS ||
-  import.meta.env.VITE_SOLANA_RPC_URL ||
-  ""
-)
-  .split(",")
-  .map((endpoint) => endpoint.trim())
-  .filter(Boolean);
-
-const RPC_ENDPOINTS = [...configuredRpcEndpoints, ...DEFAULT_RPC_ENDPOINTS]
-  .filter((endpoint, index, endpoints) => endpoints.indexOf(endpoint) === index)
-  .filter(Boolean);
-
-const rpcConnections = RPC_ENDPOINTS.map(
-  (endpoint) => new Connection(endpoint, "confirmed"),
-);
-
-function isForbiddenRpcError(error) {
-  const message = (error?.message || "").toLowerCase();
-  return (
-    message.includes("403") ||
-    message.includes("forbidden") ||
-    message.includes("api key is not allowed")
-  );
-}
-
-function isRetryableRpcError(error) {
-  const message = (error?.message || "").toLowerCase();
-  return (
-    isForbiddenRpcError(error) ||
-    message.includes("429") ||
-    message.includes("503") ||
-    message.includes("failed to fetch") ||
-    message.includes("network") ||
-    message.includes("timeout")
-  );
-}
-
-async function withRpcFallback(operation) {
-  let lastError;
-  let lastEndpoint = "";
-
-  for (const rpcConnection of rpcConnections) {
-    try {
-      lastEndpoint = rpcConnection.rpcEndpoint;
-      return await operation(rpcConnection);
-    } catch (error) {
-      lastError = error;
-      if (!isRetryableRpcError(error)) {
-        throw error;
-      }
-    }
-  }
-
-  if (!lastError) {
-    throw new Error("No RPC endpoint configured");
-  }
-
-  throw new Error(
-    `RPC failed on ${lastEndpoint}: ${lastError.message || String(lastError)}`,
-  );
-}
-
+// ==========================================
+// UTILS
+// ==========================================
 function formatAmount(rawValue, decimals) {
-  const parsed = Number(rawValue);
-  if (!Number.isFinite(parsed)) {
-    return "-";
-  }
-  return (parsed / 10 ** decimals).toLocaleString(undefined, {
-    maximumFractionDigits: 6,
-  });
-}
-
-function readU64LeAsString(accountData, offset) {
-  if (!accountData || accountData.length < offset + 8) {
-    return "0";
-  }
-
-  const view = new DataView(
-    accountData.buffer,
-    accountData.byteOffset,
-    accountData.byteLength,
-  );
-  return view.getBigUint64(offset, true).toString();
+  if (!rawValue) return "0";
+  const parsed = Number(formatUnits(BigInt(rawValue), decimals));
+  if (!Number.isFinite(parsed)) return "-";
+  return parsed.toLocaleString(undefined, { maximumFractionDigits: 6 });
 }
 
 export default function BuyToken() {
-  const wallet = useWallet();
+  // Replacing useWallet() with RainbowKit/Wagmi useAccount()
+  const { address, isConnected } = useAccount();
+  const walletKey = address; // EVM address
+
   const buttonRef = useRef(null);
   const audioRef = useRef(null);
 
   const [copyText, setCopyText] = useState("Copy");
   const [showToast, setShowToast] = useState("");
   const [usdtAmountInput, setUsdtAmountInput] = useState("1");
-  const [referralAddressInput, setReferralAddressInput] =
-    useState(DEFAULT_REFERRAL);
+  const [referralAddressInput, setReferralAddressInput] = useState(DEFAULT_REFERRAL);
   const [isReferralLocked, setIsReferralLocked] = useState(false);
+  
   const [status, setStatus] = useState({
     loading: false,
     error: "",
@@ -164,35 +85,52 @@ export default function BuyToken() {
     totalReferralTokensSoldRaw: "0",
   });
 
-  const walletKey = wallet.publicKey?.toBase58();
+  // Calculations
   const usdtToPay = Number(usdtAmountInput || "0");
-  const usdtAmountRaw = BigInt(
-    Math.max(0, Math.round(usdtToPay * 10 ** USDT_DECIMALS)),
-  );
-  const totalTokenEstimate = Number.isFinite(usdtToPay)
-    ? usdtToPay / TOKEN_PRICE_USDT
-    : 0;
-  const referralTokenEstimate = Number.isFinite(totalTokenEstimate)
-    ? (totalTokenEstimate * REFERRAL_PERCENT) / 100
-    : 0;
-  const buyerTokenEstimate = Number.isFinite(totalTokenEstimate)
-    ? totalTokenEstimate - referralTokenEstimate
-    : 0;
+  const usdtAmountRaw = parseUnits(usdtAmountInput || "0", USDT_DECIMALS); // Native BigInt parsing
+  
+  const totalTokenEstimate = Number.isFinite(usdtToPay) ? usdtToPay / TOKEN_PRICE_USDT : 0;
+  const referralTokenEstimate = Number.isFinite(totalTokenEstimate) ? (totalTokenEstimate * REFERRAL_PERCENT) / 100 : 0;
+  const buyerTokenEstimate = Number.isFinite(totalTokenEstimate) ? totalTokenEstimate - referralTokenEstimate : 0;
   const tokenPerUsdt = 1 / TOKEN_PRICE_USDT;
-  const referralLink =
-    walletKey && typeof window !== "undefined"
-      ? `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(walletKey)}#buyToken`
-      : "";
+  
+  const referralLink = walletKey && typeof window !== "undefined"
+    ? `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(walletKey)}#buyToken`
+    : "";
+
   const totalTokensSoldRaw = (
     BigInt(status.totalBuyerTokensSoldRaw || "0") +
     BigInt(status.totalReferralTokensSoldRaw || "0")
   ).toString();
 
-  const triggerButtonConfetti = () => {
-    if (!buttonRef.current) {
-      return;
-    }
+  // Wagmi Hooks for Reading Blockchain Data (Replaces Connection / getAccountInfo)
+  const { writeContractAsync } = useWriteContract();
 
+  const { data: usdtBalanceData, refetch: refetchUsdt } = useBalance({
+    address: walletKey,
+    token: USDT_CONTRACT_ADDRESS,
+    query: { enabled: !!walletKey },
+  });
+
+  const { data: vaultBalanceData, refetch: refetchVault } = useBalance({
+    address: VAULT_ADDRESS,
+    token: PROJECT_TOKEN_ADDRESS,
+  });
+
+  const { data: totalBuyerSoldData, refetch: refetchTotalBuyer } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: SALE_CONTRACT_ABI,
+    functionName: "totalBuyerTokensSold",
+  });
+
+  const { data: totalReferralSoldData, refetch: refetchTotalReferral } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: SALE_CONTRACT_ABI,
+    functionName: "totalReferralTokensSold",
+  });
+
+  const triggerButtonConfetti = () => {
+    if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
     const x = (rect.left + rect.width / 2) / window.innerWidth;
     const y = (rect.top + rect.height / 2) / window.innerHeight;
@@ -204,14 +142,7 @@ export default function BuyToken() {
       startVelocity: 30,
       gravity: 0.8,
       scalar: 0.8,
-      colors: [
-        "#cddc39",
-        "#d704d0",
-        "#7711f4",
-        "#78f40b",
-        "#f40b3a",
-        "#f4c20b",
-      ],
+      colors: ["#cddc39", "#d704d0", "#7711f4", "#78f40b", "#f40b3a", "#f4c20b"],
       zIndex: 9999,
       disableForReducedMotion: true,
     });
@@ -220,14 +151,10 @@ export default function BuyToken() {
   const handleContractCopy = async () => {
     try {
       await navigator.clipboard.writeText(CONTRACT_ADDRESS);
-
-      if (audioRef.current) {
-        audioRef.current.play();
-      }
+      if (audioRef.current) audioRef.current.play();
 
       setCopyText("Copied");
       setShowToast("show");
-
       setTimeout(() => {
         setCopyText("Copy");
         setShowToast("");
@@ -242,7 +169,6 @@ export default function BuyToken() {
       toast.error("Connect wallet to generate referral link");
       return;
     }
-
     try {
       await navigator.clipboard.writeText(referralLink);
       toast.success("Referral link copied");
@@ -255,71 +181,24 @@ export default function BuyToken() {
     try {
       setStatus((prev) => ({ ...prev, loading: true, error: "" }));
 
-      const {
-        buyerUsdtRaw,
-        vaultTokenRaw,
-        totalBuyerTokensSoldRaw,
-        totalReferralTokensSoldRaw,
-      } = await withRpcFallback(async (activeConnection) => {
-        let totalBuyerTokensSoldRaw = "0";
-        let totalReferralTokensSoldRaw = "0";
-        try {
-          const configInfo = await activeConnection.getAccountInfo(
-            CONFIG,
-            "confirmed",
-          );
-          totalBuyerTokensSoldRaw = readU64LeAsString(configInfo?.data, 146);
-          totalReferralTokensSoldRaw = readU64LeAsString(configInfo?.data, 154);
-        } catch {
-          totalBuyerTokensSoldRaw = "0";
-          totalReferralTokensSoldRaw = "0";
-        }
+      // Parallel fetching using Wagmi refetch methods
+      const [usdtRes, vaultRes, buyerSoldRes, refSoldRes] = await Promise.all([
+        isConnected ? refetchUsdt() : Promise.resolve({ data: null }),
+        refetchVault(),
+        refetchTotalBuyer(),
+        refetchTotalReferral(),
+      ]);
 
-        let vaultTokenRaw = "0";
-        try {
-          vaultTokenRaw = (
-            await activeConnection.getTokenAccountBalance(VAULT_TOKEN)
-          ).value.amount;
-        } catch {
-          vaultTokenRaw = "0";
-        }
+      const buyerUsdtRaw = usdtRes.data?.value?.toString() || "0";
+      const vaultTokenRaw = vaultRes.data?.value?.toString() || "0";
+      const totalBuyerTokensSoldRaw = buyerSoldRes.data?.toString() || "0";
+      const totalReferralTokensSoldRaw = refSoldRes.data?.toString() || "0";
 
-        if (!wallet.publicKey) {
-          return {
-            buyerUsdtRaw: "0",
-            vaultTokenRaw,
-            totalBuyerTokensSoldRaw,
-            totalReferralTokensSoldRaw,
-          };
-        }
-
-        const buyerUsdt = await getAssociatedTokenAddress(
-          USDT_MINT,
-          wallet.publicKey,
-        );
-
-        let buyerUsdtRaw = "0";
-        try {
-          buyerUsdtRaw = (
-            await activeConnection.getTokenAccountBalance(buyerUsdt)
-          ).value.amount;
-        } catch {
-          buyerUsdtRaw = "0";
-        }
-
-        return {
-          buyerUsdtRaw,
-          vaultTokenRaw,
-          totalBuyerTokensSoldRaw,
-          totalReferralTokensSoldRaw,
-        };
-      });
-
-      if (!wallet.publicKey) {
+      if (!isConnected) {
         setStatus({
           loading: false,
           error: "Connect wallet to see buyer balance",
-          buyerUsdtRaw,
+          buyerUsdtRaw: "0",
           vaultTokenRaw,
           totalBuyerTokensSoldRaw,
           totalReferralTokensSoldRaw,
@@ -336,15 +215,10 @@ export default function BuyToken() {
         totalReferralTokensSoldRaw,
       });
     } catch (error) {
-      const message = error?.message || "Failed to fetch status";
-      const rpcError =
-        message.includes("403") || message.toLowerCase().includes("forbidden");
       setStatus((prev) => ({
         ...prev,
         loading: false,
-        error: rpcError
-          ? `RPC endpoints blocked (${RPC_ENDPOINTS.join(", ")}). Set VITE_SOLANA_RPC_URL in frontend/.env to a working mainnet RPC.`
-          : message,
+        error: "Failed to fetch on-chain status. Check network connection.",
       }));
     }
   };
@@ -352,78 +226,45 @@ export default function BuyToken() {
   useEffect(() => {
     refreshStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletKey]);
+  }, [walletKey, isConnected]);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
-    const referralFromLink =
-      params.get("ref") || params.get("referral") || params.get("r");
+    const referralFromLink = params.get("ref") || params.get("referral") || params.get("r");
 
-    if (!referralFromLink) {
-      return;
-    }
+    if (!referralFromLink) return;
 
     try {
-      const referralPk = new PublicKey(referralFromLink.trim());
-      if (!PublicKey.isOnCurve(referralPk.toBuffer())) {
-        return;
-      }
+      const formattedRef = referralFromLink.trim();
+      // Validate EVM address instead of Solana public key
+      if (!isAddress(formattedRef)) return;
 
-      setReferralAddressInput(referralPk.toBase58());
+      setReferralAddressInput(formattedRef);
       setIsReferralLocked(true);
     } catch {
-      // ignore invalid referral in URL
+      // ignore invalid referral
     }
   }, []);
 
   useEffect(() => {
-    if (
-      !isReferralLocked &&
-      wallet.publicKey &&
-      referralAddressInput === DEFAULT_REFERRAL
-    ) {
-      setReferralAddressInput(wallet.publicKey.toBase58());
+    if (!isReferralLocked && isConnected && referralAddressInput === DEFAULT_REFERRAL) {
+      setReferralAddressInput(walletKey);
     }
-  }, [wallet.publicKey, referralAddressInput, isReferralLocked]);
+  }, [walletKey, isConnected, referralAddressInput, isReferralLocked]);
 
   const buyTokens = async () => {
     let loadingToast;
     try {
-      if (!wallet.publicKey) {
+      if (!isConnected) {
         toast.error("Please connect wallet first");
         return;
       }
 
-      loadingToast = toast.loading("Processing transaction...");
-
-      let referralWallet;
-      try {
-        referralWallet = new PublicKey(referralAddressInput.trim());
-      } catch {
-        throw new Error("Enter a valid referral wallet address");
-      }
-
-      const referralAccountInfo = await rpcConnections[0].getAccountInfo(
-        referralWallet,
-        "confirmed",
-      );
-      if (
-        referralAccountInfo &&
-        !referralAccountInfo.owner.equals(SystemProgram.programId)
-      ) {
-        throw new Error(
-          "Referral must be a wallet address, not a token/account address",
-        );
-      }
-
-      if (!PublicKey.isOnCurve(referralWallet.toBuffer())) {
-        throw new Error(
-          "Referral address must be a normal wallet address (not PDA)",
-        );
+      const formattedReferral = referralAddressInput.trim();
+      if (!isAddress(formattedReferral)) {
+        throw new Error("Enter a valid EVM referral wallet address");
       }
 
       if (!Number.isFinite(usdtToPay) || usdtToPay <= 0) {
@@ -431,148 +272,52 @@ export default function BuyToken() {
       }
 
       if (usdtAmountRaw <= 0n) {
-        throw new Error("USDT payable is too small. Increase token amount.");
-      }
-      const adminUsdt = FIXED_RECEIVER_USDT_ATA;
-
-      const buyerUsdt = await getAssociatedTokenAddress(
-        USDT_MINT,
-        wallet.publicKey,
-      );
-      const buyerToken = await getAssociatedTokenAddress(
-        PROJECT_MINT,
-        wallet.publicKey,
-      );
-      const sponsorToken = await getAssociatedTokenAddress(
-        PROJECT_MINT,
-        referralWallet,
-      );
-
-      if (!wallet.signTransaction) {
-        throw new Error("Wallet does not support signing transactions");
+        throw new Error("USDT payable is too small.");
       }
 
-      const { sig } = await withRpcFallback(async (activeConnection) => {
-        const provider = new anchor.AnchorProvider(activeConnection, wallet, {
-          commitment: "confirmed",
-        });
-        const program = new anchor.Program(idl, provider);
+      loadingToast = toast.loading("Confirming USDT Approval...");
 
-        const tx = new Transaction();
-
-        const [buyerTokenInfo, sponsorTokenInfo] =
-          await activeConnection.getMultipleAccountsInfo([
-            buyerToken,
-            sponsorToken,
-          ]);
-
-        const sameSponsorAsBuyer = buyerToken.equals(sponsorToken);
-
-        if (!buyerTokenInfo) {
-          tx.add(
-            createAssociatedTokenAccountIdempotentInstruction(
-              wallet.publicKey,
-              buyerToken,
-              wallet.publicKey,
-              PROJECT_MINT,
-            ),
-          );
-        }
-
-        if (!sameSponsorAsBuyer && !sponsorTokenInfo) {
-          tx.add(
-            createAssociatedTokenAccountIdempotentInstruction(
-              wallet.publicKey,
-              sponsorToken,
-              referralWallet,
-              PROJECT_MINT,
-            ),
-          );
-        }
-
-        const ix = await program.methods
-          .buy(new anchor.BN(usdtAmountRaw.toString()))
-          .accountsStrict({
-            buyer: wallet.publicKey,
-            config: CONFIG,
-            sponsor: referralWallet,
-            buyerUsdt,
-            adminUsdt,
-            buyerToken,
-            sponsorToken,
-            vaultToken: VAULT_TOKEN,
-            vaultAuthority: VAULT_AUTHORITY,
-            tokenProgram: TOKEN_PROGRAM_ID,
-          })
-          .instruction();
-
-        tx.add(ix);
-        tx.feePayer = wallet.publicKey;
-
-        const latestBlockhash =
-          await activeConnection.getLatestBlockhash("confirmed");
-        tx.recentBlockhash = latestBlockhash.blockhash;
-
-        const signedTx = await wallet.signTransaction(tx);
-
-        const sig = await activeConnection.sendRawTransaction(
-          signedTx.serialize(),
-          {
-            skipPreflight: false,
-            preflightCommitment: "confirmed",
-          },
-        );
-
-        await activeConnection.confirmTransaction(
-          {
-            signature: sig,
-            blockhash: latestBlockhash.blockhash,
-            lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-          },
-          "confirmed",
-        );
-
-        return { sig };
+      // EVM requires an Allowance (Approve) transaction first for ERC20 tokens
+      const approveTxHash = await writeContractAsync({
+        address: USDT_CONTRACT_ADDRESS,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [CONTRACT_ADDRESS, usdtAmountRaw],
       });
 
-      if (loadingToast) {
-        toast.dismiss(loadingToast);
-        loadingToast = undefined;
-      }
+      toast.loading(`Approval submitted, waiting for confirmation...`, { id: loadingToast });
+      
+      // Note: In production, you might want to wait for the receipt here.
+      // await waitForTransactionReceipt({ hash: approveTxHash });
+
+      toast.loading("Processing Buy Transaction...", { id: loadingToast });
+
+      // Call the Buy function on your Sale Contract
+      const buyTxHash = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: SALE_CONTRACT_ABI,
+        functionName: 'buy',
+        args: [usdtAmountRaw, formattedReferral],
+      });
+
+      if (loadingToast) toast.dismiss(loadingToast);
 
       refreshStatus();
       toast.success(
         <div>
           <b>Buy Successful 🎉</b>
           <br />
-          Tx: {sig.slice(0, 8)}...{sig.slice(-8)}
-        </div>,
+          Tx: {buyTxHash.slice(0, 8)}...{buyTxHash.slice(-8)}
+        </div>
       );
       triggerButtonConfetti();
+      
     } catch (error) {
-      toast.dismiss(loadingToast);
-      const nestedError = error?.error || error?.cause;
-      const nestedLogs =
-        nestedError?.logs || nestedError?.transactionLogs || [];
-      const directLogs = error?.logs || error?.transactionLogs || [];
-      const detailed =
-        nestedError?.message ||
-        error?.transactionMessage ||
-        error?.message ||
-        (nestedLogs.length > 0 ? nestedLogs[nestedLogs.length - 1] : "") ||
-        (directLogs.length > 0 ? directLogs[directLogs.length - 1] : "") ||
-        "Transaction Failed";
+      if (loadingToast) toast.dismiss(loadingToast);
+      
+      const detailed = error?.shortMessage || error?.message || "Transaction Failed";
       toast.error(detailed);
       console.error("BUY ERROR:", error);
-      if (nestedLogs.length > 0) {
-        console.error("BUY ERROR LOGS:", nestedLogs);
-      } else if (directLogs.length > 0) {
-        console.error("BUY ERROR LOGS:", directLogs);
-      }
-    } finally {
-      if (loadingToast) {
-        toast.dismiss(loadingToast);
-      }
     }
   };
 
@@ -593,20 +338,17 @@ export default function BuyToken() {
               <div className="col-md-12 mb-4 benefit-picss">
                 <h3>Buy LOL Token</h3>
                 <p>
-                  Buy LOL tokens easily on Solana mainnet using your connected
-                  wallet.
+                  Buy LOL tokens easily on the network using your connected wallet.
                 </p>
               </div>
 
               <div className="col-md-12 mb-4 benefit-picss">
                 <h3>Token Contract Address</h3>
                 <p className="mb-3">
-                  Always use official program and mint addresses to avoid fake
-                  token scams.
+                  Always use official program and mint addresses to avoid fake token scams.
                 </p>
                 <div className="token_copy_board">
                   <span className="code">
-                    {/* Contract Address: */}
                     <mark className="text-con">{CONTRACT_ADDRESS}</mark>
                   </span>
 
@@ -624,43 +366,6 @@ export default function BuyToken() {
                 </div>
               </div>
 
-              {/* <div className="col-md-12 mb-4 benefit-picss ">
-                <div className="status-card w-100">
-                  <div>
-                    <b>Your USDT Balance:</b>{" "}
-                    <span>
-                      {formatAmount(status.buyerUsdtRaw, USDT_DECIMALS)} USDT
-                    </span>
-                  </div>
-                  <div>
-                    <b>Vault LOL Balance:</b>{" "}
-                    <span className="text-aura">
-                      {formatAmount(status.vaultTokenRaw, TOKEN_DECIMALS)} LOL
-                    </span>
-                  </div>
-                  <div>
-                    <b>Total Tokens Sold (Buyer + Referral):</b>{" "}
-                    <span className="text-gas">
-                      {formatAmount(totalTokensSoldRaw, TOKEN_DECIMALS)} LOL
-                    </span>
-                  </div>
-
-                  {status.error && (
-                    <div className="error-text">{status.error}</div>
-                  )}
-
-                  <div className="text-start mt-4">
-                    <button
-                      className="refresh-btn-pro"
-                      onClick={refreshStatus}
-                      disabled={status.loading}
-                    >
-                      <i className="fas fa-sync-alt me-2"></i>
-                      {status.loading ? "Refreshing..." : " Refresh Status"}
-                    </button>
-                  </div>
-                </div>
-              </div> */}
               <div className="col-md-12 mb-4 benefit-picss">
                 <div className=" w-100">
                   <h3 className="card-title text-start"> Account Overview</h3>

@@ -130,7 +130,7 @@ const Footer = () => {
               <div className="col-xl-3 col-lg-4 col-sm-8">
                 <div className="footer-widget">
                   <h4 className="fw-title">Subscribe Newsletter</h4>
-                  <div class="footer-newsletter">
+                  <div className="footer-newsletter">
                     <ul className="contact-list-box">
                       <li className="d-none">
                         <em className="contact-icon fas fa-phone"></em>

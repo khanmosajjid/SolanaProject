@@ -18,6 +18,45 @@
   font-weight: 500;
 }
 
+/* Model code css  */
+
+    [data-rk] .ju367vb{
+      display: none!important;
+    }
+[data-rk] .ju367vb6 {
+  background: var(--tg-secondary-color)!important;
+}
+[data-rk] .ju367vgu{
+  color: var(--bs-white)!important;
+}
+[data-rk] #rk_profile_title{
+  color: var(--bs-white)!important;
+}
+[data-rk]  .ju367vgu{
+  color: var(--bs-white)!important;
+}
+[data-rk]  .ju367v2n,
+[data-rk]  .ju367v1g{
+  color: var(--tg-secondary-color)!important;
+}
+
+[data-rk] .ju367vh0 {
+  color: rgb(227 230 230 / 60%)!important;
+}
+[data-rk] .ju367vff{
+  color: var(--tg-primary-color)!important;
+}
+[data-rk] .ju367v9i {
+  background: linear-gradient(0deg,  var(--tg-primary2-color) 0%, var(--tg-primary-color))!important;
+  /* background-color: var(--tg-primary-color)!important; */
+}
+[data-rk] .ju367v2g{
+  height: 49px!important;
+}
+[data-rk] .ju367vn {
+  border-radius: 30px!important;
+}
+
 .card-shadow {
     position: absolute;
     top: 10px;
