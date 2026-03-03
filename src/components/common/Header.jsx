@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../assets/img/logo/logo-1.png";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { BaseWalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
+const WALLET_BUTTON_LABELS = {
+  "change-wallet": "Change Wallet",
+  connecting: "Connecting ...",
+  "copy-address": "Copy address",
+  copied: "Copied",
+  disconnect: "Disconnect",
+  "has-wallet": "Connect",
+  "no-wallet": "Connect Wallet",
+};
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -95,7 +105,7 @@ const Header = () => {
                   <div className="toggle-bar d-flex gap-3">
                     <div className="wallet-btn-box">
                       <div>
-                        <ConnectButton />
+                       <BaseWalletMultiButton labels={WALLET_BUTTON_LABELS} />
                       </div>
                     </div>
                     <div className="navbar-btn">
