@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../assets/img/logo/logo-1.png";
-import { BaseWalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const WALLET_BUTTON_LABELS = {
   "change-wallet": "Change Wallet",
@@ -105,7 +105,7 @@ const Header = () => {
                   <div className="toggle-bar d-flex gap-3">
                     <div className="wallet-btn-box">
                       <div>
-                       <BaseWalletMultiButton labels={WALLET_BUTTON_LABELS} />
+                       <WalletMultiButton labels={WALLET_BUTTON_LABELS} />
                       </div>
                     </div>
                     <div className="navbar-btn">
