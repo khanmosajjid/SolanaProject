@@ -459,12 +459,31 @@ export default function BuyToken() {
         const program = new anchor.Program(idl, provider);
 
         const tx = new Transaction();
+        const [
+          buyerTokenInfo,
+          sponsorTokenInfo,
+          buyerUsdtInfo,
+          adminUsdtInfo,
+          configInfo,
+          vaultInfo
+        ] = await activeConnection.getMultipleAccountsInfo([
+          buyerToken,
+          sponsorToken,
+          buyerUsdt,
+          adminUsdt,
+          CONFIG,
+          VAULT_TOKEN
+        ]);
 
-        const [buyerTokenInfo, sponsorTokenInfo] =
-          await activeConnection.getMultipleAccountsInfo([
-            buyerToken,
-            sponsorToken,
-          ]);
+        if (!configInfo) throw new Error("Config account is missing or incorrect.");
+        if (!vaultInfo) throw new Error("Vault Token account is missing or incorrect.");
+        if (!adminUsdtInfo) throw new Error("Admin USDT Account is not initialized. Please verify FIXED_RECEIVER_USDT_ATA.");
+        if (!buyerUsdtInfo) throw new Error("You do not have any USDT account. Please fund your wallet with USDT first.");
+        // const [buyerTokenInfo, sponsorTokenInfo] =
+        //   await activeConnection.getMultipleAccountsInfo([
+        //     buyerToken,
+        //     sponsorToken,
+        //   ]);
 
         const sameSponsorAsBuyer = buyerToken.equals(sponsorToken);
 
